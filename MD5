@@ -1,11 +1,11 @@
-77a498e33f63d70a8829f41c996c2e55 *DESCRIPTION
+13f4374b91bc8f3ba05afead0c918a0e *DESCRIPTION
 5ae02a3e298f2ea3b46e9866524f1295 *LICENSE
 44dfa97724cb92842129d5f1517b0c48 *NAMESPACE
-2d71f8aaf6e58cd008755c4399eb1df0 *NEWS.md
-e45b061029c8c4f5968c283a64b5c9ab *R/lex.R
+a44e19897699c494df218d585060e8c9 *NEWS.md
+c32f6bdee2317e6a7787188a9cfefd1d *R/lex.R
 26b25fc081e5b0f21fb2e2ac808f0f9a *R/logger.R
-4530f8714a3e78de6df1a4a0956322bd *R/yacc.R
-457ea2b475eb8aaa5c883177287fe97e *README.md
+515b2c1ee5658253a6a265bb614d6fb6 *R/yacc.R
+2f404866956a63fe881726c680535e5a *README.md
 7349f8791237271ed44a46834e99ea22 *inst/COPYRIGHTS
 09f2566c8c7830c155c33c32809ce529 *man/LRParser.Rd
 a9d0192cf60a17f82f0283fb6f134242 *man/LexToken.Rd
@@ -19,8 +19,8 @@ c5d7ce740296e10d653251e35ade4960 *src/Makevars
 01c8b9eff67b8822e7cbfb73af7a8e40 *src/Makevars.win
 49d776f49a3a0273cdcfefe713439271 *src/helper.c
 c590a888b01676285a05fa726dcc18bc *tests/testthat.R
-1a8fe95013b17b6446a935a61ca6d306 *tests/testthat/parser.out
 84d202f00740abc8c1c308358ad8b904 *tests/testthat/test.calclex.R
+001fac66d95eb035288996edc58868a4 *tests/testthat/test.calclex2.R
 338dd84832b17f8908697cd1e7dba565 *tests/testthat/test.lex.R
 424936bbf71e02848360a919a97f1e5a *tests/testthat/test.lex_doc1.R
 338bbeefaa848fc700b617bfa7886571 *tests/testthat/test.lex_empty.R
@@ -47,7 +47,7 @@ da7ec01544a7d7738c28cd5e54206c52 *tests/testthat/test.lex_state4.R
 9dba7f5ec29e5976c919bbf1c5f240ff *tests/testthat/test.lex_state5.R
 f3754e60f0e6aa44a641dbe44cdab15a *tests/testthat/test.lex_state_noerror.R
 d7a2c64068f23f46db0293fbf59330cf *tests/testthat/test.lex_state_norule.R
-4b9a8d04800dca47c7d779b334c688d4 *tests/testthat/test.lex_state_try.R
+aa249166a5d56313324119c5c5f964e8 *tests/testthat/test.lex_state_try.R
 4bc62a49245b17240774c7b9ba7d925f *tests/testthat/test.lex_token1.R
 ebd506ecb9b6edd4ffa657d1e8a11b3c *tests/testthat/test.lex_token2.R
 7309698505b85b4cbc0ad54e3f34a406 *tests/testthat/test.lex_token3.R
@@ -71,7 +71,7 @@ dc4ef40d56242d1b59c3157f6b6f002a *tests/testthat/test.yacc_badprec3.R
 07b69dd5473eac63f99a94091245f269 *tests/testthat/test.yacc_error2.R
 22ac70ba3c3081ec0333a51b2ccfd92e *tests/testthat/test.yacc_error3.R
 73c399e4bbf11697c4adff36819cd2f7 *tests/testthat/test.yacc_error4.R
-55be6735af52db5cdb667ad8f602b78f *tests/testthat/test.yacc_error5.R
+87a2433d45ad3ad80a7174bcb7808ec3 *tests/testthat/test.yacc_error5.R
 5374bebf21c7055794e523b0b3f1c75d *tests/testthat/test.yacc_error6.R
 d501ddca5e4fbf05102c6c84478e528d *tests/testthat/test.yacc_inf.R
 767bab07da7bcb53754fa2babfbbdaa6 *tests/testthat/test.yacc_literal.R

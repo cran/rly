@@ -233,10 +233,10 @@ Lexer <- R6Class("Lexer",
         tok <- NA
         idx <- 0
         for(lexre in self$lexre) {
-          name <- lexre[1]
-          regx <- lexre[2]
+          name <- lexre[[1]]
+          regx <- lexre[[2]]
           func <- lexre[[3]]
-          type <- lexre[4]
+          type <- lexre[[4]]
           m <- regexpr(regx, data, perl=TRUE)
           if(m != 1) next
 
@@ -261,7 +261,7 @@ Lexer <- R6Class("Lexer",
             }
           }
 
-          lexpos <- self$lexpos + nchar(matched)
+          lexpos <- lexpos + nchar(toString(matched))
 
           # If token is processed by a function, call it
 
@@ -729,7 +729,10 @@ lex = function(module=NA,
     else                            debuglog$info('lex: tokens empty')
     if(length(linfo$literals) > 0)  debuglog$info(sprintf('lex: literals = %s', paste(linfo$literals, collapse=" ")))
     else                            debuglog$info('lex: literals empty')
-    if(length(linfo$stateinfo) > 0) debuglog$info(sprintf('lex: states   = %s', paste(names(linfo$stateinfo), collapse=" ")))
+    if(length(linfo$stateinfo) > 0) debuglog$info(sprintf('lex: states   = %s', 
+                                                  paste('{', 
+                                                        sapply(names(linfo$stateinfo), function(x) paste("'", x, "'", " : ", "'", linfo$stateinfo[[x]], "', ", collapse='', sep='')), 
+                                                        '}', collapse=" ")))
     else                            debuglog$info('lex: states empty')
   }
 
