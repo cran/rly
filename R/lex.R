@@ -76,6 +76,7 @@ LexToken <- R6Class("LexToken",
     lineno = NA,
     lexpos = NA,
     lexer  = NA,
+    parser = NA,
     toString = function() {
       return(sprintf("LexToken(%s,%s,%d,%d)", self$type, toString(self$value), self$lineno, self$lexpos))
     },
@@ -155,7 +156,7 @@ Lexer <- R6Class("Lexer",
       self$lexerrorf       <- NULL
       self$lexeoff         <- NULL
       self$lextokens       <- NA
-      self$lexignore       <- ''
+      self$lexignore       <- c()
       self$lexliterals     <- NULL
       self$lexmodule       <- NA
       self$lineno          <- 1
@@ -221,10 +222,11 @@ Lexer <- R6Class("Lexer",
 
       while(lexpos <= lexlen) {
         # This code provides some short-circuit code for whitespace, tabs, and other ignored characters
-        if(grepl(substring(lexdata, lexpos, lexpos), lexignore, fixed=TRUE)) {
-          lexpos <- lexpos + 1
-          next
-        }
+        if(length(lexignore) > 0)
+          if(grepl(substring(lexdata, lexpos, lexpos), lexignore, fixed=TRUE)) {
+            lexpos <- lexpos + 1
+            next
+          }
 
         broke <- FALSE
 

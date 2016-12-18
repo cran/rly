@@ -88,8 +88,10 @@ randomString <- function(length=12) {
 
 format_result <- function(r) {
   result <- NULL
-  if(typeof(r) == "environment") result <- sprintf('<%s> (%s)', typeof(r$toString()), toString(r$toString()))
-  else                           result <- sprintf('<%s> (%s)', typeof(r), toString(r))
+  if(typeof(r) == "environment") {
+    if("toString" %in% names(r)) result <- sprintf('<%s> (%s)', typeof(r$toString()), toString(r$toString()))
+    else                         result <- sprintf('<envirnment @%s>', id(r))
+  } else                         result <- sprintf('<%s> (%s)', typeof(r), toString(r))
   return(result)
 }
 
@@ -165,11 +167,15 @@ YaccProduction <- R6Class("YaccProduction",
       self$parser <- NA
     },
     toString = function() {
-      return(self$slice[[1]]$value)
+      ret <- NULL
+      v <- self$slice[[1]]$value
+      if(typeof(v) == "environment") ret <- names(v)
+      else                           ret <- v
+      return(ret)
     },
     get = function(n) {
       if(n > 0) return(self$slice[[n]]$value)
-      else      return(tail(self$stack, -n)[[1]]$value)
+      else      return(tail(self$stack, -n+1)[[1]]$value)
     },
     set = function(n, value) {
       if(n > 0) self$slice[[n]]$value <- value
@@ -223,6 +229,17 @@ LRParser <- R6Class("LRParser",
       self$set_defaulted_states()
       self$errorok     <- TRUE
     },
+    errok = function() {
+      self$errorok <- TRUE
+    },
+    restart = function() {
+      self$statestack <- list()
+      self$symstack   <- list()
+      sym <- YaccSymbol$new()
+      sym$type <- '$end'
+      self$symstack <- append(self$symstack, sym)
+      self$statestack <- append(self$statestack, 1)
+    },
     # Defaulted state support.
     # This method identifies parser states where there is only one possible reduction action.
     # For such states, the parser can make a choose to make a rule reduction without consuming
@@ -274,6 +291,7 @@ LRParser <- R6Class("LRParser",
       sym <- YaccSymbol$new()
       sym$type <- '$end'
       self$symstack <- append(self$symstack, sym)
+      pslice$stack  <- append(pslice$stack, sym)
       state <- 1
       while(TRUE) {
         # Get the next symbol on the input.  If a lookahead symbol
@@ -320,6 +338,7 @@ LRParser <- R6Class("LRParser",
             debuglog$info(sprintf('Action : Shift and goto state %s', t))
             
             self$symstack <- append(self$symstack, lookahead)
+            pslice$stack  <- append(pslice$stack, lookahead)
             lookahead <- NULL
             
             # Decrease error count on successful shift
@@ -346,7 +365,7 @@ LRParser <- R6Class("LRParser",
               debuglog$info(sprintf('Action : Reduce rule [%s] with [%s] and goto state %d', 
                                      p$toString(), 
                                      ' ',
-                                     self$goto[[as.character(tail(self$statestack, 1)+1)]][[pname]]))
+                                     self$goto[[as.character(tail(self$statestack, 1)[[1]])]][[pname]]))
             }
             
             if(plen > 0) {
@@ -379,8 +398,7 @@ LRParser <- R6Class("LRParser",
                 state <- self$goto[[as.character(tail(self$statestack, 1)[[1]])]][[pname]]
                 self$statestack <- append(self$statestack, state)
               }, error = function(e) {
-                cat(toString(e))
-                cat('\n')
+                print(e)
                 # If an error was set. Enter error recovery state
                 lookaheadstack <- append(lookaheadstack, lookahead)    # Save the current lookahead token
 #                symstack.extend(targ[1:-1])                           # Put the production slice back on the stack
@@ -389,8 +407,8 @@ LRParser <- R6Class("LRParser",
 #                sym.type = 'error'
 #                sym.value = 'error'
 #                lookahead = sym
-#                errorcount = error_count
-#                self.errorok = False
+                errorcount <- error_count
+                self$errorok <- FALSE
               })
             
               next
@@ -419,10 +437,10 @@ LRParser <- R6Class("LRParser",
                 debuglog$info(sprintf('Result : %s', format_result(pslice)))
                 
                 self$symstack <- append(self$symstack, sym)
-                state <- self$goto[[as.character(tail(self$statestack, 1)[[1]]+1)]][[pname]]
+                state <- self$goto[[as.character(tail(self$statestack, 1)[[1]])]][[pname]]
                 self$statestack <- append(self$statestack, state)
               }, error = function(e) {
-                cat('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n')
+                print(e)
                 # If an error was set. Enter error recovery state
                 lookaheadstack <- append(lookaheadstack, lookahead)    # Save the current lookahead token
 #                symstack.extend(targ[1:-1])         # Put the production slice back on the stack
@@ -431,8 +449,8 @@ LRParser <- R6Class("LRParser",
 #                sym.type = 'error'
 #                sym.value = 'error'
 #                lookahead = sym
-#                errorcount = error_count
-#                self.errorok = False
+                errorcount <- error_count
+                self$errorok <- FALSE
               })
   
               next
@@ -469,8 +487,10 @@ LRParser <- R6Class("LRParser",
             errtoken <- lookahead
             if(errtoken$type == '$end') errtoken <- NULL
             if(!is.null(self$errorfunc)) {
-              if(!is.null(errtoken))
-                if(is.null(errtoken$lexer)) errtoken$lexer <- lexer
+              if(!is.null(errtoken)) {
+                if(is.na(errtoken$lexer))  errtoken$lexer  <- lexer
+                if(is.na(errtoken$parser)) errtoken$parser <- self
+              }
               
               self$state <- state
               tok <- self$errorfunc(errtoken)
@@ -622,6 +642,7 @@ Production <- R6Class("Production",
     func      = NA,
     callable  = NA,
     prec      = NA,
+    str       = NA,
     len       = NA,
     usyms     = NA,
     lr_items  = NA,
@@ -648,12 +669,16 @@ Production <- R6Class("Production",
       # List of all LR items for the production
       self$lr_items <- list()
       self$lr_next  <- NA
+      
+      # Create a string representation
+      if(length(self$prod) > 0) self$str <- sprintf('%s -> %s',      self$name, paste(self$prod, collapse=' '))
+      else                      self$str <- sprintf('%s -> <empty>', self$name)
     },
     # Return the nth lr_item from the production (or None if at the end)
     lr_item = function(n) {
     },
     toString = function() {
-      return(sprintf('%s -> %s', self$name, paste(self$prod, collapse = ' ')))
+      return(self$str)
     },
     bind = function(instance) {
       if(!is.na(self$func)) self$callable <- instance[[self$func]]
@@ -715,8 +740,8 @@ LRItem <- R6Class("LRItem",
     },
     toString = function() {
       s <- ''
-      if(!is.null(self$prod)) s <- sprintf('%s -> %s', self$name, paste(self$prod, collapse=' '))
-      else                    s <- sprintf('%s -> <empty>',  self$name)
+      if(length(self$prod) > 0) s <- sprintf('%s -> %s', self$name, paste(self$prod, collapse=' '))
+      else                      s <- sprintf('%s -> <empty>',  self$name)
       return(s)
     }
   )
@@ -1076,7 +1101,12 @@ Grammar <- R6Class("Grammar",
         }
       }
       
-      if(!broke) result <- append(result, '<empty>')
+      if(!broke) {
+        # There was no 'break' from the loop,
+        # so x_produces_empty was true for all x in beta,
+        # so beta produces empty as well.
+        result <- append(result, '<empty>')
+      }
       
       return(result)
     },

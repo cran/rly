@@ -1,3 +1,21 @@
+### Changes in v1.2.1
+
+#### NOTES
+
+  1. Single quote the software names 'lex' and 'yacc' both in Title and Description.
+
+### Changes in v1.2.0
+
+#### NEW FEATURES
+
+  1. LRParser : add function restart.
+
+#### BUG FIXES
+
+  1. Error when no literals defined at all.
+
+  2. YaccProduction : Function get don't accept negative arguments.
+
 ### Changes in v1.1.0
 
 #### NEW FEATURES

@@ -1,0 +1,66 @@
+INFO [2016-12-04 21:05:23] Created by RLY (https://github.com/systemincloud/rly)
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] Grammar
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] Rule 0     S' -> start
+INFO [2016-12-04 21:05:23] Rule 1     start -> A nest C
+INFO [2016-12-04 21:05:23] Rule 2     nest -> B
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] Terminals, with rules where they appear
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] A                    : 1
+INFO [2016-12-04 21:05:23] B                    : 2
+INFO [2016-12-04 21:05:23] C                    : 1
+INFO [2016-12-04 21:05:23] error                : 
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] Nonterminals, with rules where they appear
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] nest                 : 1
+INFO [2016-12-04 21:05:23] start                : 0
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] Parsing method: LALR
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] state 1
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     (0) S' -> . start
+INFO [2016-12-04 21:05:23]     (1) start -> . A nest C
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     A               shift and go to state 2
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     start                          shift and go to state 3
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] state 2
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     (1) start -> A . nest C
+INFO [2016-12-04 21:05:23]     (2) nest -> . B
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     B               shift and go to state 4
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     nest                           shift and go to state 5
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] state 3
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     (0) S' -> start .
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] state 4
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     (2) nest -> B .
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     C               reduce using rule 2 (nest -> B .)
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] state 5
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     (1) start -> A nest . C
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     C               shift and go to state 6
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23] state 6
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     (1) start -> A nest C .
+INFO [2016-12-04 21:05:23] 
+INFO [2016-12-04 21:05:23]     $end            reduce using rule 1 (start -> A nest C .)
+INFO [2016-12-04 21:05:23] 
