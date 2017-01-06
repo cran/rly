@@ -1,8 +1,8 @@
-8f2382bb1431b7dd6da683affb22e7a4 *DESCRIPTION
+0172623f75017977699a7d1f1ebdae7a *DESCRIPTION
 5ae02a3e298f2ea3b46e9866524f1295 *LICENSE
 44dfa97724cb92842129d5f1517b0c48 *NAMESPACE
-284d177ecc8603f72d216f864ec6c6ce *NEWS.md
-07a31372ba27ec8f37853ba6754f01ca *R/lex.R
+416b770f041e1ed940a0407cbe8bb172 *NEWS.md
+a5142d476861f8b36338a2aeb88aec35 *R/lex.R
 26b25fc081e5b0f21fb2e2ac808f0f9a *R/logger.R
 dd8706efcd89faa34f395ce5d8f4c7c4 *R/yacc.R
 2f404866956a63fe881726c680535e5a *README.md
@@ -57,6 +57,7 @@ e08a23bdd370afa453931e70a3b0e1d1 *tests/testthat/test.lex_ignore.R
 84118fcf3a114fc6bf33b468f7656237 *tests/testthat/test.lex_literal1.R
 a27a33730acd3db7dfb933d51cca6152 *tests/testthat/test.lex_literal2.R
 9e53336e4f75e8b6de864eacfaa7136e *tests/testthat/test.lex_literal3.R
+bf7d57b5d909feead195fd56a8d445eb *tests/testthat/test.lex_literal4.R
 e77b636d0bc07f8f5cb96eada5137d8e *tests/testthat/test.lex_many_tokens.R
 f851e67104b8d272e74afb8c63641c0b *tests/testthat/test.lex_re1.R
 acac7ca0e14ad7a8b96dd4f2cb03a791 *tests/testthat/test.lex_re2.R

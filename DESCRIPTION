@@ -1,8 +1,8 @@
 Package: rly
 Type: Package
 Title: 'Lex' and 'Yacc'
-Version: 1.3.0
-Date: 2016-12-30
+Version: 1.4.0
+Date: 2017-01-06
 Authors@R: c(person("Marek", "Jagielski", 
                     role = c("aut", "cre", "cph"), 
                     email = "marek.jagielski@gmail.com"),
@@ -19,6 +19,6 @@ Depends: R (>= 3.3.0), R6, futile.logger
 RoxygenNote: 5.0.1
 Collate: 'logger.R' 'lex.R' 'yacc.R'
 NeedsCompilation: yes
-Packaged: 2016-12-30 00:14:44 UTC; marek
+Packaged: 2017-01-06 14:50:30 UTC; marek
 Repository: CRAN
-Date/Publication: 2016-12-30 01:29:13
+Date/Publication: 2017-01-06 16:53:43
