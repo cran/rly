@@ -5,7 +5,7 @@ library(rly)
 
 context("Attempt to define a rule with a bad-identifier name")
 
-Parser1 <- R6Class("Parser1",
+Parser1 <- R6::R6Class("Parser1",
   public = list(
     tokens = c('NAME','NUMBER', 'PLUS','MINUS','TIMES','DIVIDE','EQUALS', 'LPAREN','RPAREN'),
     # Parsing rules
@@ -49,7 +49,7 @@ Parser1 <- R6Class("Parser1",
   )
 )
 
-Parser2 <- R6Class("Parser2",
+Parser2 <- R6::R6Class("Parser2",
   public = list(
     tokens = c('NAME','NUMBER', 'PLUS','MINUS','TIMES','DIVIDE','EQUALS', 'LPAREN','RPAREN'),
     # Parsing rules
@@ -95,8 +95,8 @@ Parser2 <- R6Class("Parser2",
 
 
 test_that("rule name", {
-  expect_output(expect_error(rly::yacc(Parser1), "Unable to build parser"),
-"ERROR .* p_statement_expr2: Illegal name bad&rule in rule statement")
-  expect_output(expect_error(rly::yacc(Parser2), "Unable to build parser"),
-"ERROR .* p_badrule: Illegal rule name bad\\&rule")
+  expect_output(expect_error(rly::yacc(Parser1), "\\[YaccError\\]Unable to build parser"),
+"ERROR .* \\[GrammarError\\]p_statement_expr2: Illegal name bad&rule in rule statement")
+  expect_output(expect_error(rly::yacc(Parser2), "\\[YaccError\\]Unable to build parser"),
+"ERROR .* \\[GrammarError\\]p_badrule: Illegal rule name bad\\&rule")
 })

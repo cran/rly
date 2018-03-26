@@ -5,7 +5,7 @@ library(rly)
 
 context("A grammar with a bad %prec specifier")
 
-Parser <- R6Class("Parser",
+Parser <- R6::R6Class("Parser",
   public = list(
     tokens = c('NAME','NUMBER', 'PLUS','MINUS','TIMES','DIVIDE','EQUALS', 'LPAREN','RPAREN'),
     # Parsing rules
@@ -46,6 +46,6 @@ Parser <- R6Class("Parser",
 )
 
 test_that("prec", {
-  expect_output(expect_error(rly::yacc(Parser), "Unable to build parser"),
-  "ERROR .* p_expression_uminus: Nothing known about the precedence of UMINUS")
+  expect_output(expect_error(rly::yacc(Parser), "\\[YaccError\\]Unable to build parser"),
+  "ERROR .* \\[GrammarError\\]p_expression_uminus: Nothing known about the precedence of UMINUS")
 })
