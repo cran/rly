@@ -1,7 +1,7 @@
-8f2e2ecab855b83de4517cf8654702e1 *DESCRIPTION
+07d64f1fbc2e1f430e6330156b12a2f2 *DESCRIPTION
 5ae02a3e298f2ea3b46e9866524f1295 *LICENSE
 3f3169f4694313c9b052a8bbea558cd5 *NAMESPACE
-68d12995c74ab5fe0cb15318cdedf28c *R/lex.R
+5c1c01adadd4ca8b7d0fa30b0e2e886b *R/lex.R
 ae3e86955200c646f89f4b78960d3713 *R/logger.R
 d9d3fdb65800131bba0e80f3c286c383 *R/yacc.R
 8ad16c8b08aef1b26d585483ccc52d5d *demo/00Index
@@ -76,6 +76,7 @@ de4c8ac7ef1feb9c7f673b53213c634e *tests/testthat/test.lex_token3.R
 e38d850a72993e51166399c73d01bb74 *tests/testthat/test.lex_token4.R
 6c59777c0a9ad13fdca5b17584090e4a *tests/testthat/test.lex_token5.R
 68d0098909d5e920668da4856a36ba4e *tests/testthat/test.lex_token_dup.R
+ceec2538a5ba14c64c28fca05287a7ab *tests/testthat/test.lex_variable.R
 17849fa8a118a949f6ed8f712026cc66 *tests/testthat/test.pkg_test1.R
 b1c92412d313c54e5ce4c2f526cbc31e *tests/testthat/test.yacc_badargs.R
 26f8e07ceecb19223c2ab48cda079a66 *tests/testthat/test.yacc_badid.R
