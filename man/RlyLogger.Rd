@@ -17,8 +17,9 @@ it into RLY.
 '
 }
 \examples{
-debuglog <- RlyLogger$new(".", "file.out")
+debuglog <- rly::RlyLogger$new(".", "file.out")
 debuglog$info('This is info message')
+
+file.remove("file.out")
 }
 \keyword{datasets}
-

@@ -1,0 +1,351 @@
+## ---- include = FALSE---------------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+## ----setup--------------------------------------------------------------------
+library(rly)
+
+## ----url-lex-01---------------------------------------------------------------
+# Define what tokens we accept. In this case, just URLs
+
+TOKENS <- c("URL")
+
+# Build our "lexing" rules. This is an {R6} class. 
+# If you've never played with {R6} classes, head on
+# over to <https://cran.rstudio.com/web/packages/R6/>
+# to learn more about it and also take a look at the
+# packages that depend on/use it (which may help you
+# grok {R6} a bit better.)
+
+URLexer <- R6::R6Class(
+  
+  classname = "Lexer",
+  
+  public = list(
+    
+    # tell it abt the tokens we accept
+    
+    tokens = TOKENS, 
+    
+    # we use the t_ prefix to identify that this is the 
+    # "matcher" for the token and then give it the regular
+    # expression that goes with this token. The URL
+    # regex is a toy one that says to match http or https
+    # strings until it hits a space.
+    # 
+    # The `t` parameter is the the full context of the token
+    # parser at the time it gets to this token.
+    #
+    # here, we're just printing a message out and continuing
+    # but we could do anything we (programmatically) want
+    
+    t_URL = function(re = 'http[s]*://[^[:space:]]+', t) {
+      message("Found URL: ", t$value) # Be verbose when we find a URL
+      return(t) # we need to return the potentially modified token
+    },
+    
+    # whenever a newline is encounterd we increment a line #
+    # counter. this is useful when providing contextual errors
+    
+    t_newline = function(re='\\n+', t) {
+      t$lexer$lineno <- t$lexer$lineno + nchar(t$value)
+      return(NULL)
+    },
+    
+    # the goal of the lexer is to give us valid input 
+    # but we can ignore errors if we're just looking for 
+    # certain things (like URLs)
+    
+    t_error = function(t) {
+      t$lexer$skip(1)
+      return(t)
+    }
+    
+  )
+)
+
+# Create out lexer
+
+lexer  <- rly::lex(URLexer)
+
+# Feed it some data
+
+lexer$input(s = "
+http://google.com     https://rstudio.org/
+Not a URL  https://rud.is/b Another non-URL
+https://r-project.org/
+
+
+
+https://one.more.url/with/some/extra/bits.html
+
+
+")
+
+# We'll put found URLs here (rly inefficient)
+found_urls <- character(0) 
+
+# keep track of the # of invalid token info (also inefficient)
+invalid <- list()
+
+# Now, we'll iterate through the tokens we were given
+
+repeat {
+  
+  tok <- lexer$token() # get the next token
+  
+  if (is.null(tok)) break # no more tokens, done with lexing
+  
+  switch(
+    tok$type,
+    
+    # Do this when we find a token identified as a `URL`
+    URL = found_urls <- append(found_urls, tok$value),
+    
+    # Do this whenever we find an invalid token
+    error = invalid <- append(invalid, list(data.frame(
+      bad_thing = tok$value,
+      stream_pos = tok$lexpos,
+      line = tok$lineno,
+      stringsAsFactors = FALSE
+    )))
+  )
+  
+}
+
+invalid <- do.call(rbind.data.frame, invalid)
+
+nrow(invalid) # number of errors
+
+head(invalid, 10) # it'll be clear we never told it abt whitespace
+
+found_urls # the good stuff
+
+## ----url-lex-02---------------------------------------------------------------
+# we'll define different token types for HTTP URLs, HTTPS URLs and
+# MAILTO URLs
+
+TOKENS <- c("HTTP_URL", "HTTPS_URL", "MAILTO_URL")
+
+URLexer <- R6::R6Class(
+  
+  classname = "Lexer",
+  
+  public = list(
+    
+    tokens = TOKENS, 
+
+    # three different token regexes
+    
+    t_HTTPS_URL = function(re = 'https://[^[:space:]]+', t) {
+      message("Found HTTPS URL: ", t$value)
+      return(t)
+    },
+
+    t_MAILTO_URL = function(re = 'mailto:[^[:space:]]+', t) {
+      message("Found MAILTO URL: ", t$value)
+      return(t)
+    },
+
+    t_HTTP_URL = function(re = 'http://[^[:space:]]+', t) {
+      message("Found HTTP URL: ", t$value)
+      return(t)
+    },
+
+    t_error = function(t) {
+      t$lexer$skip(1) # if we don't do this the lexer will error out on tokens we don't match (which is usually what we want)
+      return(t)
+    }
+    
+  )
+)
+
+# Create out lexer
+
+lexer  <- rly::lex(URLexer)
+
+# Feed it some data
+
+lexer$input(s = "
+http://google.com     https://rstudio.org/
+Not a URL  https://rud.is/b Another non-URL mailto:fred@example.com?subject=Hello 
+https://r-project.org/
+
+mailto:steve@example.com
+
+https://one.more.url/with/some/extra/bits.html
+
+
+")
+
+http_urls <- character(0) 
+https_urls <- character(0) 
+mailto_urls <- character(0) 
+
+repeat {
+  
+  tok <- lexer$token() # get the next token
+  
+  if (is.null(tok)) break # no more tokens, done with lexing
+  
+  switch(
+    tok$type,
+    
+    HTTP_URL = http_urls <- append(http_urls, tok$value),
+    HTTPS_URL = https_urls <- append(https_urls, tok$value),
+    MAILTO_URL = mailto_urls <- append(mailto_urls, tok$value)
+    
+  )
+  
+}
+
+http_urls
+
+https_urls
+
+mailto_urls
+
+## ----echo=FALSE---------------------------------------------------------------
+Sys.setenv("__R_CHECK_LENGTH_1_CONDITION_"=FALSE)
+Sys.setenv("__R_CHECK_LENGTH_1_LOGIC2_"=FALSE)
+
+
+## ----eval=TRUE----------------------------------------------------------------
+TOKENS = c('NAME', 'NUMBER')
+LITERALS = c('=', '+', '-', '*', '/', '(', ')') # these are "LEXEMES" (ref: https://stackoverflow.com/questions/14954721/what-is-the-difference-between-a-token-and-a-lexeme)
+
+Lexer <- R6::R6Class(
+  
+  classname = "Lexer",
+  
+  public = list(
+    
+    tokens = TOKENS,
+    
+    literals = LITERALS,
+    
+    t_NAME = '[a-zA-Z_][a-zA-Z0-9_]*',
+    
+    t_NUMBER = function(re='\\d+', t) {
+      t$value <- strtoi(t$value)
+      return(t)
+    },
+    
+    t_ignore = " \t",
+    
+    t_newline = function(re='\\n+', t) {
+      t$lexer$lineno <- t$lexer$lineno + nchar(t$value)
+      return(NULL)
+    },
+    
+    t_error = function(t) {
+      cat(sprintf("Illegal character '%s'", t$value[1]))
+      t$lexer$skip(1)
+      return(t)
+    }
+    
+  )
+)
+
+## ----eval=TRUE----------------------------------------------------------------
+Parser <- R6::R6Class(
+  
+  classname = "Parser",
+                      
+  public = list(
+    
+    tokens = TOKENS,
+    
+    literals = LITERALS,
+    
+    # Parsing rules
+    precedence = list(
+      c('left', '+', '-'),
+      c('left', '*', '/'),
+      c('right', 'UMINUS')
+    ),
+    
+    # dictionary of names (can be inefficient but it's cool here)
+    names = new.env(hash=TRUE),
+    
+    # One type of "statement" is NAME=expression
+    
+    p_statement_assign = function(doc='statement : NAME "=" expression', p) {
+      self$names[[as.character(p$get(2))]] <- p$get(4)
+    },
+    
+    # Another type of "statement" is just an expression
+    
+    p_statement_expr = function(doc='statement : expression', p) {
+      cat(p$get(2))
+      cat('\n')
+    },
+    
+    # Classic simple definition of an expression
+    
+    p_expression_binop = function(doc="expression : expression '+' expression
+                                                  | expression '-' expression
+                                                  | expression '*' expression
+                                                  | expression '/' expression", p) {
+           if(p$get(3) == '+') p$set(1, p$get(2) + p$get(4))
+      else if(p$get(3) == '-') p$set(1, p$get(2) - p$get(4))
+      else if(p$get(3) == '*') p$set(1, p$get(2) * p$get(4))
+      else if(p$get(3) == '/') p$set(1, p$get(2) / p$get(4))
+    },
+    
+    # unary minus is a special case we need to handle 
+    # see https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.bpxa600/bpxa698.htm
+    # for %prec explanation
+    # note order does kinda matter in both lexer and parser rule specs
+    
+    p_expression_uminus = function(doc="expression : '-' expression %prec UMINUS", p) {
+      p$set(1, -p$get(3))
+    },
+    
+    # parnens expression
+    
+    p_expression_group = function(doc="expression : '(' expression ')'", p) {
+      p$set(1, p$get(3))
+    },
+    
+    p_expression_number = function(doc='expression : NUMBER', p) {
+      p$set(1, p$get(2))
+    },
+    
+    p_expression_name = function(doc='expression : NAME', p) {
+      p$set(1, self$names[[as.character(p$get(2))]])
+    },
+    
+    p_error = function(p) {
+      if(is.null(p)) cat("Syntax error at EOF")
+      else           cat(sprintf("Syntax error at '%s'", p$value))
+    }
+    
+  )
+)
+
+lexer  <- lex(Lexer)
+parser <- yacc(Parser)
+
+# these will each end with `NULL` as that's how the `parser` signals it's done
+parser$parse("3", lexer)
+
+parser$parse("3 + 5", lexer)
+
+parser$parse("3 + 5 * 10 - 100", lexer)
+
+parser$parse("A + B * C - D", lexer) # valid lexical syntax but no data to work on; in a real calculator this wld error out
+
+parser$parse("A + B * C - D = E", lexer) # invalid lexical syntax 
+
+parser$parse("A = 1 + 2", lexer) # valid syntax, still no output b/c we just did assignment
+parser$parse("A", lexer) 
+
+invisible(parser$parse("B = 5", lexer)) # using invisible() only to suppress useless NULLs
+invisible(parser$parse("C = 10", lexer))
+invisible(parser$parse("D = 100", lexer))
+
+parser$parse("A + B * C - D", lexer) 
+

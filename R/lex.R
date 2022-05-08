@@ -488,9 +488,10 @@ LexerReflect <- R6::R6Class("LexerReflect",
     },
     # Validate literals
     validate_literals = function() {
-      for(l in self$literals) {
-        if(!is.character(l) || nchar(l) > 1) {
-          self$log$error('Invalid literal. Must be a single character')
+      for (l in self$literals) {
+        if (typeof(l) != "character" ||
+            (length(self$literals) > 1 && nchar(l) > 1)) {
+          self$log$error("Invalid literal. Must be a single character")
           self$error <- TRUE
         }
       }
@@ -716,6 +717,13 @@ LexerReflect <- R6::R6Class("LexerReflect",
 #' )
 #'
 #' lexer  <- rly::lex(Lexer)
+#' lexer$input("5 + 3")
+#' print(lexer$token()$value)
+#' # [1] 5
+#' print(lexer$token()$value)
+#' # [1] "+"
+#' print(lexer$token()$value)
+#' # [1] 3
 lex = function(module=NA,
                args=list(),
                debug=FALSE,
